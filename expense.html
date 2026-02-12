@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowFi - Expense Tracking</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="module-container">
+        <header class="module-header">
+            <a href="dashboard.html" class="btn-back">← Back to Dashboard</a>
+            <h1>💰 Expense Tracking</h1>
+        </header>
+
+        <section class="module-content">
+            <div class="concept-box">
+                <h2>Why Track Expenses?</h2>
+                <ul class="concept-list">
+                    <li>📌 <strong>Know Where Money Goes:</strong> Track every expense to understand spending patterns.</li>
+                    <li>📌 <strong>Identify Wastage:</strong> Find unnecessary expenses and cut them down.</li>
+                    <li>📌 <strong>Stay Within Budget:</strong> Monitor spending to prevent overspending.</li>
+                </ul>
+            </div>
+
+            <div class="task-box">
+                <h2>Your Task: Add and Track Expenses</h2>
+                <p>Add expenses and watch your wallet balance update. You start with ₹1000. Be careful not to overspend!</p>
+
+                <div class="wallet-display">
+                    <label>Current Wallet:</label>
+                    <span id="walletDisplay">₹1000</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="expenseCategory">Category:</label>
+                    <select id="expenseCategory">
+                        <option value="Food">🍔 Food</option>
+                        <option value="Transport">🚗 Transport</option>
+                        <option value="Entertainment">🎬 Entertainment</option>
+                        <option value="Utilities">⚡ Utilities</option>
+                        <option value="Other">📦 Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="expenseAmount">Amount (₹):</label>
+                    <input type="number" id="expenseAmount" placeholder="e.g., 500" min="0">
+                </div>
+
+                <button class="btn btn-primary" onclick="addExpense()">Add Expense</button>
+
+                <div id="expenseAlert" class="alert-box hidden"></div>
+
+                <div class="expenses-list">
+                    <h3>Your Expenses</h3>
+                    <ul id="expensesList"></ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Expense tracking module logic
+        let expenses = [];
+
+        // Load expenses from localStorage for this session
+        function loadExpenses() {
+            const userStr = localStorage.getItem('currentUser');
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                document.getElementById('walletDisplay').textContent = '₹' + user.walletBalance;
+            }
+        }
+
+        function addExpense() {
+            const category = document.getElementById('expenseCategory').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const alertBox = document.getElementById('expenseAlert');
+            const userStr = localStorage.getItem('currentUser');
+
+            if (!userStr) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Validation
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+
+            const user = JSON.parse(userStr);
+            const newBalance = user.walletBalance - amount;
+
+            // Check for overspending
+            alertBox.classList.remove('hidden');
+            if (newBalance < 0) {
+                alertBox.innerHTML = '⚠️ <strong>Warning!</strong> Insufficient balance. This expense will result in overspending.';
+                alertBox.classList.add('alert-danger');
+                return;
+            } else {
+                alertBox.innerHTML = '✅ Expense added successfully!';
+                alertBox.classList.remove('alert-danger');
+            }
+
+            // Add expense to list
+            const expense = {
+                category: category,
+                amount: amount,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            expenses.push(expense);
+
+            // Update wallet balance
+            user.walletBalance = newBalance;
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            document.getElementById('walletDisplay').textContent = '₹' + newBalance;
+
+            // Clear inputs
+            document.getElementById('expenseAmount').value = '';
+
+            // Refresh expense list
+            displayExpenses();
+
+            // Award badge and points with financial tip (FEATURE 2)
+            awardBadge('expense', 'Expense Manager', 50);
+        }
+
+        function displayExpenses() {
+            const expensesList = document.getElementById('expensesList');
+            if (expenses.length === 0) {
+                expensesList.innerHTML = '<li>No expenses yet</li>';
+                return;
+            }
+
+            expensesList.innerHTML = '';
+            expenses.forEach((exp, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${exp.category}: ₹${exp.amount} (${exp.timestamp})`;
+                expensesList.appendChild(li);
+            });
+        }
+
+        // Prevent access if not logged in
+        function checkAccess() {
+            const userStr = localStorage.getItem('currentUser');
+            if (!userStr) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        checkAccess();
+        loadExpenses();
+        displayExpenses();
+    </script>
+</body>
+</html>
