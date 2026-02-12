@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowFi - Invest Smart</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="module-container">
+        <header class="module-header">
+            <a href="dashboard.html" class="btn-back">← Back to Dashboard</a>
+            <h1>📈 Invest Smart</h1>
+        </header>
+
+        <section class="module-content">
+            <div class="concept-box">
+                <h2>Understanding Investment Risk</h2>
+                <ul class="concept-list">
+                    <li>📌 <strong>Risk vs Return:</strong> Higher risk investments offer higher potential returns but greater loss possibility.</li>
+                    <li>📌 <strong>Low Risk:</strong> Bonds, Fixed Deposits (FDs) - Safe but lower returns (~4-6%).</li>
+                    <li>📌 <strong>Medium Risk:</strong> Mutual Funds, Mixed Portfolio - Balanced approach (~8-12%).</li>
+                    <li>📌 <strong>High Risk:</strong> Stocks, Crypto - High potential returns but volatile (~15%+).</li>
+                </ul>
+            </div>
+
+            <div class="task-box">
+                <h2>Your Task: Choose Your Investment Strategy</h2>
+                <p>Select a risk level based on your financial goals and comfort level.</p>
+
+                <div class="form-group">
+                    <label>Select Your Risk Level:</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="riskLevel" value="low">
+                            🟢 <strong>Low Risk</strong> - Safety first, steady growth
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="riskLevel" value="medium">
+                            🟡 <strong>Medium Risk</strong> - Balanced approach, moderate growth
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="riskLevel" value="high">
+                            🔴 <strong>High Risk</strong> - Growth focused, aggressive strategy
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="validateInvestmentChoice()">Confirm Choice</button>
+
+                <div id="investResult" class="result-box hidden">
+                    <p id="investResultMessage"></p>
+                    <p id="investInfo"></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Investment module logic
+        function validateInvestmentChoice() {
+            const riskLevel = document.querySelector('input[name="riskLevel"]:checked');
+            const resultDiv = document.getElementById('investResult');
+            const resultMessage = document.getElementById('investResultMessage');
+            const investInfo = document.getElementById('investInfo');
+
+            // Validation
+            if (!riskLevel) {
+                alert('Please select a risk level');
+                return;
+            }
+
+            const selectedRisk = riskLevel.value;
+            resultDiv.classList.remove('hidden');
+
+            // Display strategy based on risk level
+            let strategy = '';
+            if (selectedRisk === 'low') {
+                strategy = '✅ <strong>Low Risk Strategy Selected!</strong><br>Focus: Fixed Deposits (FDs), Bonds, Savings Account.<br>Expected Return: 4-6% annually.';
+            } else if (selectedRisk === 'medium') {
+                strategy = '✅ <strong>Medium Risk Strategy Selected!</strong><br>Focus: Mutual Funds, Balanced Portfolio, Index Funds.<br>Expected Return: 8-12% annually.';
+            } else if (selectedRisk === 'high') {
+                strategy = '✅ <strong>High Risk Strategy Selected!</strong><br>Focus: Stocks, Growth Funds, Emerging Markets.<br>Expected Return: 15%+ annually (with higher volatility).';
+            }
+
+            resultMessage.innerHTML = strategy;
+            investInfo.textContent = 'Remember: Diversify your investments and review your portfolio regularly!';
+
+            // Award badge and points with financial tip (FEATURE 2)
+            awardBadge('invest', 'Investment Explorer', 50);
+        }
+
+        // Prevent access if not logged in
+        function checkAccess() {
+            const userStr = localStorage.getItem('currentUser');
+            if (!userStr) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        checkAccess();
+    </script>
+</body>
+</html>
