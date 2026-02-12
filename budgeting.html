@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrowFi - Budgeting Basics</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="module-container">
+        <header class="module-header">
+            <a href="dashboard.html" class="btn-back">← Back to Dashboard</a>
+            <h1>📊 Budgeting Basics</h1>
+        </header>
+
+        <section class="module-content">
+            <div class="concept-box">
+                <h2>What is Budgeting?</h2>
+                <ul class="concept-list">
+                    <li>📌 <strong>Plan Your Money:</strong> Budgeting means deciding how much to spend and save each month.</li>
+                    <li>📌 <strong>Track Income & Expenses:</strong> Know how much money comes in and goes out.</li>
+                    <li>📌 <strong>Balanced Budget:</strong> A healthy budget means income should be greater than or equal to expenses.</li>
+                </ul>
+            </div>
+
+            <div class="task-box">
+                <h2>Your Task: Create a Budget</h2>
+                <p>Enter your monthly income and expenses. We'll check if your budget is balanced!</p>
+
+                <div class="form-group">
+                    <label for="monthlyIncome">Monthly Income (₹):</label>
+                    <input type="number" id="monthlyIncome" placeholder="e.g., 50000" min="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="monthlyExpenses">Monthly Expenses (₹):</label>
+                    <input type="number" id="monthlyExpenses" placeholder="e.g., 40000" min="0">
+                </div>
+
+                <button class="btn btn-primary" onclick="validateBudget()">Check Budget</button>
+
+                <div id="budgetResult" class="result-box hidden">
+                    <p id="resultMessage"></p>
+                    <p id="balanceInfo"></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Budgeting module logic
+        function validateBudget() {
+            const income = parseFloat(document.getElementById('monthlyIncome').value);
+            const expenses = parseFloat(document.getElementById('monthlyExpenses').value);
+            const resultDiv = document.getElementById('budgetResult');
+            const resultMessage = document.getElementById('resultMessage');
+            const balanceInfo = document.getElementById('balanceInfo');
+
+            // Validation
+            if (isNaN(income) || isNaN(expenses)) {
+                alert('Please enter valid numbers');
+                return;
+            }
+
+            if (income === 0) {
+                alert('Income cannot be zero');
+                return;
+            }
+
+            resultDiv.classList.remove('hidden');
+
+            // Check if budget is balanced
+            if (income >= expenses) {
+                resultMessage.innerHTML = '✅ <strong>Great! Your budget is balanced.</strong>';
+                balanceInfo.textContent = `You have ₹${(income - expenses).toFixed(2)} left to save or invest.`;
+                
+                // Award badge and points with financial tip (FEATURE 2)
+                awardBadge('budgeting', 'Budget Beginner', 50);
+            } else {
+                resultMessage.innerHTML = '❌ <strong>Budget Alert!</strong>';
+                balanceInfo.textContent = `Your expenses exceed income by ₹${(expenses - income).toFixed(2)}. Reduce expenses to balance.`;
+            }
+        }
+
+        // Prevent access if not logged in
+        function checkAccess() {
+            const userStr = localStorage.getItem('currentUser');
+            if (!userStr) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        checkAccess();
+    </script>
+</body>
+</html>
